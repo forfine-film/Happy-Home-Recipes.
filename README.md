@@ -3,7 +3,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Home Recipes - สร้างความสุขในทุกมื้ออาหารของครอบครัว</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* --- ส่วน CSS (ปรับปรุงการ์ดเมนูให้เป็นแบบเดียว) --- */
         * {
             margin: 0;
             padding: 0;
@@ -136,6 +138,13 @@
         .generate-btn:active {
             transform: translateY(-1px);
         }
+        
+        .generate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
 
         .loading {
             display: none;
@@ -175,6 +184,9 @@
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            /* ปรับการ์ดให้มีสไตล์เดียว */
+            border-top: 5px solid #D8627D; 
+            background: linear-gradient(to bottom, #FFF0F5, white);
         }
 
         .menu-card:hover {
@@ -182,31 +194,13 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
-        .menu-card.soup {
-            border-top: 5px solid #B4E7F8;
-            background: linear-gradient(to bottom, #E8F8FF, white);
-        }
-
-        .menu-card.dry {
-            border-top: 5px solid #FFD4BA;
-            background: linear-gradient(to bottom, #FFF9F5, white);
-        }
-
         .menu-card-header {
             padding: 20px;
             font-size: 1.2em;
             font-weight: bold;
-            color: #6B7280;
-        }
-
-        .menu-card.soup .menu-card-header {
-            background: linear-gradient(135deg, #B4E7F8, #A8DADC);
-            color: #1E88E5;
-        }
-
-        .menu-card.dry .menu-card-header {
-            background: linear-gradient(135deg, #FFD4BA, #FFDAB9);
-            color: #F57C00;
+            color: #374151;
+            /* ลบ background สีออก */
+            background: #FCE4EC; 
         }
 
         .menu-card-body {
@@ -529,16 +523,16 @@
         </div>
 
         <div class="ingredients-section">
-            <h2>📝 วัตถุดิบที่คุณมีในครัว</h2>
+            <h2>📝 วัตถุดิบหลักที่คุณมีในครัว</h2>
             <div class="ingredients-grid">
                 <div class="ingredient-input">
-                    <input type="text" id="ingredient1" placeholder="วัตถุดิบที่ 1 เช่น ไก่">
+                    <input type="text" id="ingredient1" placeholder="วัตถุดิบที่ 1 (เช่น ไก่)">
                 </div>
                 <div class="ingredient-input">
-                    <input type="text" id="ingredient2" placeholder="วัตถุดิบที่ 2 เช่น ผักบุ้ง">
+                    <input type="text" id="ingredient2" placeholder="วัตถุดิบที่ 2 (เช่น ผักบุ้ง)">
                 </div>
                 <div class="ingredient-input">
-                    <input type="text" id="ingredient3" placeholder="วัตถุดิบที่ 3 เช่น มะเขือเทศ">
+                    <input type="text" id="ingredient3" placeholder="วัตถุดิบที่ 3 (เช่น มะเขือเทศ)">
                 </div>
                 <div class="ingredient-input">
                     <input type="text" id="ingredient4" placeholder="วัตถุดิบที่ 4 (ถ้ามี)">
@@ -646,373 +640,496 @@
     </div>
 
     <script>
-        // ฟังก์ชันวิเคราะห์ประเภทวัตถุดิบ
+        // ฟังก์ชันวิเคราะห์ประเภทวัตถุดิบ (คงเดิม)
         function analyzeIngredient(ingredient) {
             const ing = ingredient.toLowerCase();
             
-            // โปรตีน
-            if (ing.includes('ไก่')) return { type: 'protein', name: 'ไก่', gout: false };
-            if (ing.includes('หมู')) return { type: 'protein', name: 'หมู', gout: false, cholesterol: true };
-            if (ing.includes('ปลา')) return { type: 'protein', name: 'ปลา', gout: false };
-            if (ing.includes('กุ้ง')) return { type: 'protein', name: 'กุ้ง', gout: true, cholesterol: true };
-            if (ing.includes('หอย')) return { type: 'protein', name: 'หอย', gout: true, cholesterol: true };
-            if (ing.includes('ไข่')) return { type: 'protein', name: 'ไข่', cholesterol: true };
-            if (ing.includes('เต้าหู้')) return { type: 'protein', name: 'เต้าหู้', gout: false };
+            // โปรตีนและไขมัน
+            if (ing.match(/ไก่|chicken|อกไก่|สะโพกไก่/)) return { type: 'protein', name: 'ไก่', gout: false, cholesterol: false, id: Math.random() };
+            if (ing.match(/หมู|pork|เนื้อหมู/)) return { type: 'protein', name: 'หมู', gout: false, cholesterol: true, id: Math.random() };
+            if (ing.match(/ปลา|fish/)) return { type: 'protein', name: 'ปลา', gout: false, cholesterol: false, id: Math.random() };
+            if (ing.match(/กุ้ง|shrimp/)) return { type: 'protein', name: 'กุ้ง', gout: true, cholesterol: true, id: Math.random() };
+            if (ing.match(/ไข่|egg|ไข่แดง/)) return { type: 'protein', name: 'ไข่', cholesterol: true, id: Math.random() };
+            if (ing.match(/เต้าหู้|tofu/)) return { type: 'protein', name: 'เต้าหู้', gout: false, cholesterol: false, id: Math.random() };
             
-            // ผัก
-            if (ing.includes('ผักบุ้ง')) return { type: 'vegetable', name: 'ผักบุ้ง' };
-            if (ing.includes('คะน้า')) return { type: 'vegetable', name: 'คะน้า' };
-            if (ing.includes('ผักกาด')) return { type: 'vegetable', name: 'ผักกาด' };
-            if (ing.includes('กะหล่ำ')) return { type: 'vegetable', name: 'กะหล่ำปลี' };
-            if (ing.includes('ถั่วฝักยาว')) return { type: 'vegetable', name: 'ถั่วฝักยาว' };
-            if (ing.includes('มะเขือ')) return { type: 'vegetable', name: 'มะเขือเทศ' };
-            if (ing.includes('ฟักทอง')) return { type: 'vegetable', name: 'ฟักทอง' };
+            // ผักและคาร์โบไฮเดรต
+            if (ing.match(/ผักบุ้ง/)) return { type: 'vegetable', name: 'ผักบุ้ง', gout: false, id: Math.random() };
+            if (ing.match(/คะน้า/)) return { type: 'vegetable', name: 'คะน้า', gout: false, id: Math.random() };
+            if (ing.match(/มะเขือ|tomato/)) return { type: 'vegetable', name: 'มะเขือเทศ', gout: false, id: Math.random() };
+            if (ing.match(/เห็ด|mushroom/)) return { type: 'vegetable', name: 'เห็ด', gout: true, id: Math.random() };
+            if (ing.match(/กะเพรา|ใบกะเพรา/)) return { type: 'vegetable', name: 'ใบกะเพรา', gout: false, id: Math.random() };
+            if (ing.match(/แครอท|carrot/)) return { type: 'vegetable', name: 'แครอท', gout: false, id: Math.random() };
             
-            // สมุนไพร
-            if (ing.includes('ตะไคร้')) return { type: 'herb', name: 'ตะไคร้' };
-            if (ing.includes('ข่า')) return { type: 'herb', name: 'ข่า' };
-            if (ing.includes('ใบมะกรูด')) return { type: 'herb', name: 'ใบมะกรูด' };
-            if (ing.includes('พริก')) return { type: 'spice', name: 'พริก' };
+            // สมุนไพรและเครื่องเทศ
+            if (ing.match(/ตะไคร้|lemongrass/)) return { type: 'herb', name: 'ตะไคร้', id: Math.random() };
+            if (ing.match(/ข่า|galangal/)) return { type: 'herb', name: 'ข่า', id: Math.random() };
+            if (ing.match(/ใบมะกรูด|kaffir lime/)) return { type: 'herb', name: 'ใบมะกรูด', id: Math.random() };
+            if (ing.match(/พริก|chili/)) return { type: 'spice', name: 'พริก', id: Math.random() };
+            if (ing.match(/กระเทียม/)) return { type: 'spice', name: 'กระเทียม', id: Math.random() };
             
             // ถ้าไม่พบ ให้เป็นผักทั่วไป
-            return { type: 'vegetable', name: ingredient };
+            return { type: 'vegetable', name: ingredient, gout: false, cholesterol: false, id: Math.random() };
         }
 
-        // ฟังก์ชันสร้างเมนู
+
+        // ฟังก์ชันหลักในการสร้างเมนู (ปรับปรุงใหม่: เพิ่มวัตถุดิบเสริมมาตรฐาน)
         function generateMenu() {
-            // เก็บวัตถุดิบ
             const ingredients = [];
+            const generateBtn = document.querySelector('.generate-btn');
+            const loadingDiv = document.getElementById('loading');
+            const menuResultsDiv = document.getElementById('menuResults');
+            const healthWarningDiv = document.getElementById('healthWarning');
+
+            // 1. เก็บวัตถุดิบที่ผู้ใช้กรอก
             for (let i = 1; i <= 5; i++) {
                 const value = document.getElementById(`ingredient${i}`).value.trim();
                 if (value) ingredients.push(value);
             }
 
-            if (ingredients.length < 2) {
-                alert('กรุณากรอกวัตถุดิบอย่างน้อย 2 รายการค่ะ 😊');
+            if (ingredients.length < 1) {
+                alert('กรุณากรอกวัตถุดิบหลักอย่างน้อย 1 รายการค่ะ 😊');
                 return;
             }
 
-            // แสดง loading
-            document.getElementById('loading').classList.add('active');
-            document.getElementById('menuResults').innerHTML = '';
-            document.getElementById('healthWarning').style.display = 'none';
+            // 2. เพิ่มวัตถุดิบเสริมมาตรฐาน (สมมติว่ามีในครัว)
+            const standardSpices = ['พริก', 'กระเทียม', 'ตะไคร้', 'ข่า', 'ใบมะกรูด', 'ใบกะเพรา'];
+            const allIngredients = [...ingredients, ...standardSpices];
+            
+            // 3. จัดการสถานะ Loading
+            generateBtn.disabled = true;
+            loadingDiv.classList.add('active');
+            menuResultsDiv.innerHTML = '';
+            healthWarningDiv.style.display = 'none';
 
-            // สร้างเมนู
+            // 4. เริ่มสร้างเมนู (จำลองการทำงาน 2 วินาที)
             setTimeout(() => {
-                const analyzed = ingredients.map(ing => analyzeIngredient(ing));
-                const proteins = analyzed.filter(a => a.type === 'protein');
-                const vegetables = analyzed.filter(a => a.type === 'vegetable');
-                const herbs = analyzed.filter(a => a.type === 'herb' || a.type === 'spice');
-
-                let soupMenu, dryMenu;
-
-                // ตัดสินใจเมนูน้ำ
-                if (proteins.length > 0) {
-                    const mainProtein = proteins[0];
-                    if (herbs.some(h => h.name === 'ตะไคร้' || h.name === 'ข่า')) {
-                        soupMenu = createTomYum(mainProtein, vegetables, ingredients);
-                    } else {
-                        soupMenu = createClearSoup(mainProtein, vegetables, ingredients);
+                const analyzed = allIngredients.map(ing => analyzeIngredient(ing));
+                let proteins = analyzed.filter(a => a.type === 'protein');
+                // ผักที่ผู้ใช้กรอกเองเท่านั้น
+                let vegetables = analyzed.filter(a => a.type === 'vegetable' && !standardSpices.includes(a.name)); 
+                const krapao = analyzed.filter(a => a.name === 'ใบกะเพรา'); // กะเพราจากการเสริม
+                const herbs = analyzed.filter(a => a.type === 'herb');
+                const spices = analyzed.filter(a => a.type === 'spice');
+                
+                let strongMenuHTML = '';
+                let mildMenuHTML = '';
+                let ingredientsUsedIds = new Set(); 
+                
+                // --- 5. ตรรกะการสร้างเมนูรสจัด (Strong Menu) ---
+                
+                // เลือกโปรตีนหลักสำหรับการทำเมนูรสจัด
+                let strongProtein = proteins.find(p => p.name !== 'ไข่' && p.name !== 'เต้าหู้');
+                
+                // ตรรกะ A1: ผัดกะเพรา
+                if (strongProtein && krapao.length > 0 && spices.some(s => s.name === 'พริก')) {
+                    strongMenuHTML = createSimplePadKraPao(strongProtein, vegetables, analyzed);
+                    
+                    // ถ้ามีโปรตีนมากกว่า 1 ชนิด ค่อยเก็บ ID โปรตีนไว้ (เพื่อแยกส่วน)
+                    if (proteins.length > 1) {
+                        ingredientsUsedIds.add(strongProtein.id); 
+                    } 
+                }
+                
+                // ตรรกะ A2: ต้มยำ/ต้มแซ่บ
+                else if (strongProtein && (herbs.length > 0 || spices.some(s => s.name === 'พริก'))) {
+                    strongMenuHTML = createSimpleTomYum(strongProtein, vegetables, analyzed);
+                    
+                    // ถ้ามีโปรตีนมากกว่า 1 ชนิด ค่อยเก็บ ID โปรตีนไว้
+                    if (proteins.length > 1) {
+                        ingredientsUsedIds.add(strongProtein.id); 
                     }
-                } else {
-                    soupMenu = createVegSoup(vegetables[0] || analyzed[0], ingredients);
+                }
+                
+                // --- 6. จัดการวัตถุดิบที่เหลือสำหรับเมนูรสอ่อน ---
+                
+                let remainingProteins = proteins.filter(p => !ingredientsUsedIds.has(p.id));
+                let remainingVegetables = vegetables.filter(v => !ingredientsUsedIds.has(v.id));
+                let mildProtein = remainingProteins[0];
+                
+                // จัดการโปรตีนสำหรับเมนูอ่อน: 
+                // ถ้าเมนูจัดใช้โปรตีนหลักไปแล้ว ให้เลือกโปรตีนที่เหลือ (ถ้ามี) หรือใช้โปรตีนเดิมเป็นส่วนที่สอง
+                if (strongMenuHTML && remainingProteins.length > 0) {
+                     mildProtein = remainingProteins.find(p => p.name !== strongProtein.name) || remainingProteins[0];
+                } 
+                // ถ้าไม่มีเมนูรสจัดเลย ให้ใช้โปรตีนหลักชิ้นแรกเป็นของเมนูรสอ่อน
+                else if (!strongMenuHTML && proteins.length > 0) {
+                    mildProtein = proteins[0];
+                }
+                
+                // --- 7. ตรรกะการสร้างเมนูรสอ่อน (Mild Menu) ---
+                
+                // ตรรกะ B1: แกงจืด/ต้มจืด
+                if (mildProtein && remainingVegetables.length > 0) {
+                    mildMenuHTML = createSimpleClearSoup(mildProtein, remainingVegetables, analyzed);
+                }
+                
+                // ตรรกะ B2: ผัดผักคลีน 
+                else if (mildProtein && mildProtein.name !== 'ไข่' && remainingVegetables.length > 0) {
+                    mildMenuHTML = createSimpleStirFry(mildProtein, remainingVegetables, analyzed);
+                }
+                
+                // ตรรกะ B3: ไข่เจียว/ไข่ดาว
+                else if (remainingProteins.some(p => p.name === 'ไข่')) {
+                    mildMenuHTML = createSimpleOmelette(remainingVegetables, analyzed);
+                }
+                
+                // ตรรกะ B4: ผัดผักมังสวิรัติ (ถ้าเหลือแต่ผัก)
+                else if (remainingVegetables.length > 0 && !mildMenuHTML) {
+                    mildMenuHTML = createSimpleVegStirFry(remainingVegetables[0], analyzed);
+                }
+                
+                // --- 8. จัดการผลลัพธ์สุดท้าย ---
+                
+                let menuHTML = '';
+                
+                if (strongMenuHTML && !mildMenuHTML) {
+                    menuHTML = strongMenuHTML + `<div class="menu-card" style="text-align: center; padding: 40px; color: #9CA3AF;">*วัตถุดิบหลักไม่พอสำหรับสร้างเมนูที่สอง (รสอ่อน) ค่ะ*</div>`;
+                } 
+                else if (!strongMenuHTML && mildMenuHTML) {
+                    menuHTML = `<div class="menu-card" style="text-align: center; padding: 40px; color: #9CA3AF;">*ไม่สามารถสร้างเมนูรสจัดได้จากวัตถุดิบหลักที่คุณกรอก (อาจไม่มีโปรตีนหลัก)*</div>` + mildMenuHTML;
+                } 
+                else if (strongMenuHTML && mildMenuHTML) {
+                    menuHTML = strongMenuHTML + mildMenuHTML;
+                }
+                else {
+                     menuHTML = `<div style="text-align: center; padding: 40px; color: #D8627D; font-size: 1.3em;">
+                            😢 กรุณากรอกวัตถุดิบหลัก (โปรตีน/ผัก) อย่างน้อย 1 รายการค่ะ
+                         </div>`;
+                    menuResultsDiv.style.gridTemplateColumns = '1fr';
                 }
 
-                // ตัดสินใจเมนูแห้ง
-                if (proteins.length > 0) {
-                    const mainProtein = proteins[0];
-                    if (herbs.some(h => h.name === 'พริก')) {
-                        dryMenu = createSpicyStirFry(mainProtein, vegetables, ingredients);
-                    } else {
-                        dryMenu = createMildStirFry(mainProtein, vegetables, ingredients);
-                    }
-                } else {
-                    dryMenu = createVegStirFry(vegetables[0] || analyzed[0], ingredients);
+                // 9. แสดงผลและเคลียร์สถานะ
+                loadingDiv.classList.remove('active');
+                generateBtn.disabled = false;
+                menuResultsDiv.innerHTML = menuHTML;
+                healthWarningDiv.style.display = 'block';
+
+                // 10. ล้าง Input
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`ingredient${i}`).value = '';
                 }
 
-                // แสดงผล
-                document.getElementById('loading').classList.remove('active');
-                document.getElementById('menuResults').innerHTML = soupMenu + dryMenu;
-                document.getElementById('healthWarning').style.display = 'block';
             }, 2000);
         }
 
-        // สร้างเมนูต้มยำ
-        function createTomYum(protein, vegetables, ingredients) {
-            const vegName = vegetables.length > 0 ? 'ใส่' + vegetables[0].name : '';
-            const menuName = `ต้มยำ${protein.name}${vegName}`;
+        // 1. ต้มยำ/ต้มแซ่บแบบง่าย (Strong Menu)
+        function createSimpleTomYum(protein, vegetables, analyzed) {
+            const mainProteinName = protein.name;
+            const hasKaffir = analyzed.some(a => a.name === 'ใบมะกรูด');
+            const otherIngredients = vegetables.filter(v => !v.name.includes('กะเพรา')).map(v => v.name);
             
+            const ingredientsUsed = [
+                `${mainProteinName} - 200 กรัม`,
+                ...otherIngredients.map(name => `${name} - เล็กน้อย`)
+            ];
+            
+            const seasoningsUsed = [
+                'น้ำ - 3 ถ้วย',
+                'เกลือ - 1/2 ช้อนชา',
+                'น้ำปลา - 1 ช้อนโต๊ะ',
+                'น้ำมะนาว - 2 ช้อนโต๊ะ',
+                analyzed.some(a => a.name === 'ตะไคร้') ? 'ตะไคร้ทุบ' : null,
+                analyzed.some(a => a.name === 'ข่า') ? 'ข่าหั่น' : null,
+                analyzed.some(a => a.name === 'พริก') ? 'พริกขี้หนูทุบ' : null,
+                hasKaffir ? 'ใบมะกรูด' : null
+            ].filter(Boolean);
+
             return createMenuCard({
-                name: menuName,
-                type: 'soup',
+                name: `ต้มยำน้ำใส${mainProteinName}${otherIngredients.length > 0 ? `ใส่${otherIngredients.join(', ')}` : ''}`,
                 taste: 'strong',
                 calories: '120-180',
                 price: '50-80',
                 time: '20 นาที',
-                ingredients: [
-                    `${protein.name}${protein.name === 'กุ้ง' ? 'สด' : 'หั่นชิ้น'} - 200 กรัม`,
-                    'เห็ดฟาง - 100 กรัม',
-                    'มะเขือเทศ - 2 ลูก',
-                    'หอมแดง - 3 หัว'
-                ],
-                seasonings: [
-                    'ตะไคร้ทุบ - 2 ต้น',
-                    'ข่าหั่น - 5 แว่น', 
-                    'ใบมะกรูด - 4 ใบ',
-                    'พริกขี้หนูทุบ - 5-10 เม็ด',
-                    'น้ำปลา - 2 ช้อนโต๊ะ',
-                    'น้ำมะนาว - 3 ช้อนโต๊ะ'
-                ],
+                ingredients: ingredientsUsed,
+                seasonings: seasoningsUsed,
                 steps: [
-                    'ต้มน้ำ 2 ถ้วย ใส่สมุนไพร',
-                    `ใส่${protein.name} ต้มจนสุก`,
-                    'ใส่เห็ดและมะเขือเทศ',
-                    'ปิดไฟ ใส่พริก',
-                    'ปรุงรสด้วยน้ำปลา น้ำมะนาว'
+                    'ต้มน้ำ ใส่เกลือ และสมุนไพรที่ใช้ ลงไปต้มให้เดือด',
+                    `ใส่${mainProteinName} และผักที่หั่นไว้ (ถ้ามี) ต้มจนสุก`,
+                    'ปิดไฟ ปรุงรสด้วยน้ำปลาและน้ำมะนาว',
+                    'โรยพริกขี้หนูตามชอบ'
                 ],
                 warnings: {
                     diabetes: '✅ เหมาะสม - ไม่มีน้ำตาล',
-                    hypertension: '⚠️ ลดน้ำปลา',
-                    cholesterol: protein.cholesterol ? '⚠️ ' + protein.name + 'มีคอเลสเตอรอล' : '✅ ดี',
-                    gout: protein.gout ? '❌ ' + protein.name + 'มีพิวรีนสูง' : '✅ ปลอดภัย'
+                    hypertension: '⚠️ ลดน้ำปลา (โซเดียมสูง)',
+                    cholesterol: protein.cholesterol ? `⚠️ ${mainProteinName}มีไขมัน/คอเลสเตอรอล ควรตักมันออก` : '✅ ดี',
+                    gout: protein.gout ? `❌ ${mainProteinName}มีพิวรีนสูง (เสี่ยงต่ออาการกำเริบ)` : '✅ ปลอดภัย'
                 }
             });
         }
 
-        // สร้างแกงจืด
-        function createClearSoup(protein, vegetables, ingredients) {
-            const vegName = vegetables.length > 0 ? vegetables[0].name : 'ผักกาด';
-            const menuName = `แกงจืด${protein.name}${vegName}`;
+        // 2. ผัดกะเพราแบบง่าย (Strong Menu)
+        function createSimplePadKraPao(protein, vegetables, analyzed) {
+            const mainProteinName = protein.name;
+            const vegNames = vegetables.filter(v => v.name !== 'ใบกะเพรา').map(v => v.name).join(', ');
             
-            return createMenuCard({
-                name: menuName,
-                type: 'soup', 
-                taste: 'mild',
-                calories: '100-130',
-                price: '40-50',
-                time: '15 นาที',
-                ingredients: [
-                    `${protein.name}สับ - 200 กรัม`,
-                    `${vegName} - 150 กรัม`,
-                    'เต้าหู้ขาว - 1 แผ่น'
-                ],
-                seasonings: [
-                    'น้ำซุป - 3 ถ้วย',
-                    'กระเทียมทุบ - 3 กลีบ',
-                    'ซีอิ๊วขาว - 1 ช้อนโต๊ะ',
-                    'เกลือ - 1/4 ช้อนชา',
-                    'พริกไทย - เล็กน้อย'
-                ],
-                steps: [
-                    'ต้มน้ำซุปให้เดือด',
-                    `ปั้น${protein.name}สับเป็นก้อน ใส่ต้ม`,
-                    'รอลอยขึ้น ต้ม 3 นาที',
-                    `ใส่${vegName}และเต้าหู้`,
-                    'ปรุงรสด้วยซีอิ๊วขาว เกลือ'
-                ],
-                warnings: {
-                    diabetes: '✅ ดีมาก - คาร์บต่ำ',
-                    hypertension: '⚠️ ลดเกลือ',
-                    cholesterol: '✅ ใช้เนื้อแดง',
-                    gout: protein.gout ? '❌ ระวัง' : '✅ ปลอดภัย'
-                }
-            });
-        }
+            const ingredientsUsed = [
+                `${mainProteinName}สับ/หั่น - 250 กรัม`,
+                'ใบกะเพรา - 1 กำมือ',
+                vegNames ? `${vegNames} - เล็กน้อย` : null
+            ].filter(Boolean);
 
-        // สร้างผัดเผ็ด
-        function createSpicyStirFry(protein, vegetables, ingredients) {
-            const vegName = vegetables.length > 0 ? vegetables[0].name : '';
-            const menuName = `ผัดกะเพรา${protein.name}`;
-            
+            const seasoningsUsed = [
+                'น้ำมัน - 2 ช้อนโต๊ะ',
+                analyzed.some(a => a.name === 'กระเทียม') ? 'กระเทียม - 5 กลีบ' : 'กระเทียมสำเร็จรูป',
+                analyzed.some(a => a.name === 'พริก') ? 'พริก - 5-10 เม็ด' : 'พริกสำเร็จรูป',
+                'น้ำปลา - 1 ช้อนโต๊ะ',
+                'น้ำตาล - 1/2 ช้อนชา (ถ้าชอบ)'
+            ].filter(Boolean);
+
             return createMenuCard({
-                name: menuName,
-                type: 'dry',
+                name: `ผัดกะเพรา${mainProteinName}${vegNames ? `ใส่${vegNames}` : ''} (แบบแห้ง)`,
                 taste: 'strong',
                 calories: '250-300',
                 price: '45-55',
                 time: '10 นาที',
-                ingredients: [
-                    `${protein.name}สับ - 250 กรัม`,
-                    'ใบกะเพรา - 1 กำมือ',
-                    'ถั่วฝักยาว - 100 กรัม'
-                ],
-                seasonings: [
-                    'น้ำมัน - 3 ช้อนโต๊ะ',
-                    'กระเทียม - 5 กลีบ',
-                    'พริกขี้หนู - 5-10 เม็ด',
-                    'น้ำปลา - 1 ช้อนโต๊ะ',
-                    'ซีอิ๊วดำ - 1 ช้อนโต๊ะ',
-                    'น้ำตาล - 1 ช้อนชา'
-                ],
+                ingredients: ingredientsUsed,
+                seasonings: seasoningsUsed,
                 steps: [
-                    'ตั้งกระทะไฟแรง',
-                    'ผัดกระเทียมพริก',
-                    `ใส่${protein.name} ผัดสุก`,
-                    'ปรุงรส ใส่น้ำนิดหน่อย',
-                    'ปิดไฟ ใส่กะเพรา'
+                    'โขลกกระเทียมและพริก ผัดกับน้ำมันให้หอม',
+                    `ใส่${mainProteinName} ผัดจนสุก`,
+                    `ถ้ามีผักอื่น ๆ (เช่น ${vegNames}) ใส่ลงไปผัดเร็ว ๆ`,
+                    'ปรุงรสด้วยน้ำปลาและน้ำตาล',
+                    'ใส่ใบกะเพรา ปิดไฟแล้วตักเสิร์ฟทันที'
                 ],
                 warnings: {
-                    diabetes: '⚠️ ลดน้ำตาล',
-                    hypertension: '⚠️ เค็มมาก',
+                    diabetes: '⚠️ ลดน้ำตาลให้เหลือ 1/2 ช้อนชา',
+                    hypertension: '⚠️ ลดน้ำปลา',
                     cholesterol: '⚠️ ใช้น้ำมันน้อย',
-                    gout: protein.gout ? '❌ ไม่เหมาะ' : '✅ ดี'
+                    gout: protein.gout ? `❌ ไม่เหมาะ (พิวรีนสูง)` : '✅ ดี'
                 }
             });
         }
 
-        // สร้างผัดธรรมดา
-        function createMildStirFry(protein, vegetables, ingredients) {
+        // 3. แกงจืดแบบง่าย (Mild Menu)
+        function createSimpleClearSoup(protein, vegetables, analyzed) {
+            const mainProteinName = protein.name;
             const vegName = vegetables.length > 0 ? vegetables[0].name : 'ผัก';
-            const menuName = `${protein.name}ผัด${vegName}`;
+
+            const ingredientsUsed = [
+                `${mainProteinName}สับ/หั่น - 200 กรัม`,
+                `${vegName} - 150 กรัม`,
+                (protein.name === 'เต้าหู้') ? 'เต้าหู้ขาว - 1 แผ่น' : null 
+            ].filter(Boolean);
+
+            const seasoningsUsed = [
+                'น้ำซุป/น้ำเปล่า - 3 ถ้วย',
+                'ซีอิ๊วขาว - 1 ช้อนโต๊ะ',
+                'เกลือ - 1/4 ช้อนชา'
+            ];
             
             return createMenuCard({
-                name: menuName,
-                type: 'dry',
+                name: `แกงจืด${mainProteinName}${vegName}`,
                 taste: 'mild',
-                calories: '200-250',
-                price: '50-60',
+                calories: '100-130',
+                price: '40-50',
                 time: '15 นาที',
-                ingredients: [
-                    `${protein.name}หั่น - 250 กรัม`,
-                    `${vegName} - 150 กรัม`,
-                    'หอมใหญ่ - 1/2 หัว'
+                ingredients: ingredientsUsed,
+                seasonings: seasoningsUsed,
+                steps: [
+                    'ต้มน้ำซุปให้เดือด',
+                    `ปั้น${mainProteinName}สับเป็นก้อน (ถ้าใช้) ใส่ต้ม`,
+                    'ใส่ผักและเต้าหู้ (ถ้ามี)',
+                    'ปรุงรสด้วยซีอิ๊วขาว เกลือ'
                 ],
-                seasonings: [
-                    'น้ำมัน - 2 ช้อนโต๊ะ',
-                    'กระเทียม - 3 กลีบ',
-                    'น้ำมันหอย - 1 ช้อนโต๊ะ',
-                    'ซีอิ๊วขาว - 1 ช้อนโต๊ะ',
-                    'น้ำตาล - 1/2 ช้อนชา'
-                ],
+                warnings: {
+                    diabetes: '✅ ดีมาก - คาร์บต่ำ',
+                    hypertension: '⚠️ ลดเกลือและซีอิ๊วขาว',
+                    cholesterol: protein.cholesterol ? '⚠️ ถ้าใช้หมู/ไข่ ควรลดปริมาณ' : '✅ ดี',
+                    gout: protein.gout ? `❌ ${mainProteinName}มีพิวรีนสูง` : '✅ ปลอดภัย'
+                }
+            });
+        }
+
+        // 4. ผัดผัก/เนื้อแบบง่าย (Mild Menu)
+        function createSimpleStirFry(protein, vegetables, analyzed) {
+            const mainProteinName = protein.name;
+            const vegNames = vegetables.filter(v => !v.name.includes('กะเพรา')).map(v => v.name).join('และ');
+            
+            const ingredientsUsed = [
+                `${mainProteinName}หั่น - 250 กรัม`,
+                vegNames ? `${vegNames} - 200 กรัม` : null
+            ].filter(Boolean);
+
+            const seasoningsUsed = [
+                'น้ำมัน - 2 ช้อนโต๊ะ',
+                analyzed.some(a => a.name === 'กระเทียม') ? 'กระเทียม - 3 กลีบ' : 'กระเทียมสำเร็จรูป',
+                'ซีอิ๊วขาว - 1 ช้อนโต๊ะ',
+                'น้ำตาล - เล็กน้อย'
+            ].filter(Boolean);
+
+            return createMenuCard({
+                name: `${mainProteinName}ผัด${vegNames ? vegNames : 'น้ำมันหอย'} (รสอ่อน)`,
+                taste: 'mild',
+                calories: '180-230',
+                price: '40-50',
+                time: '15 นาที',
+                ingredients: ingredientsUsed,
+                seasonings: seasoningsUsed,
                 steps: [
                     'ผัดกระเทียมให้หอม',
-                    `ใส่${protein.name} ผัดสุก`,
-                    `ใส่${vegName} ผัดต่อ`,
-                    'ปรุงรสด้วยซอส',
-                    'ผัดให้เข้ากัน'
+                    `ใส่${mainProteinName} ผัดจนเกือบสุก`,
+                    vegNames ? `ใส่${vegNames} ผัดต่อให้ผักสลด` : 'เติมน้ำเปล่าเล็กน้อย',
+                    'ปรุงรสด้วยซีอิ๊วขาวและน้ำตาล'
+                ],
+                warnings: {
+                    diabetes: '✅ ดี (คาร์บต่ำ)',
+                    hypertension: '⚠️ ลดซีอิ๊วขาว/น้ำปลา',
+                    cholesterol: protein.cholesterol ? '⚠️ ถ้าใช้หมู/ไข่แดงมาก ควรลดปริมาณ' : '✅ ดี',
+                    gout: protein.gout ? `❌ ไม่ดี (พิวรีนสูง)` : '✅ ปลอดภัย'
+                }
+            });
+        }
+
+        // 5. ไข่เจียว/ไข่ดาวแบบง่าย (Mild Menu)
+        function createSimpleOmelette(vegetables, analyzed) {
+            const vegNames = vegetables.map(v => v.name).join('และ');
+            
+            const ingredientsUsed = [
+                'ไข่ไก่ - 2 ฟอง',
+                vegNames ? `${vegNames}สับละเอียด - เล็กน้อย` : null
+            ].filter(Boolean);
+
+            const seasoningsUsed = [
+                'น้ำมันสำหรับทอด - 3 ช้อนโต๊ะ',
+                'ซีอิ๊วขาว - 1/2 ช้อนชา'
+            ];
+            
+            return createMenuCard({
+                name: `ไข่เจียว${vegNames ? `ใส่${vegNames}` : 'ฟู'}`,
+                taste: 'mild',
+                calories: '150-200',
+                price: '25-35',
+                time: '5 นาที',
+                ingredients: ingredientsUsed,
+                seasonings: seasoningsUsed,
+                steps: [
+                    'ตอกไข่ ใส่ซีอิ๊วขาวและผัก (ถ้ามี)',
+                    'ตีไข่ให้เข้ากัน',
+                    'ตั้งกระทะ ใส่น้ำมันให้ร้อนจัด',
+                    'เทไข่ลงทอดจนสุกเหลืองทั้งสองด้าน'
                 ],
                 warnings: {
                     diabetes: '✅ ดี',
-                    hypertension: '⚠️ ลดซอส',
-                    cholesterol: protein.cholesterol ? '⚠️ ระวัง' : '✅ ดี',
-                    gout: protein.gout ? '❌ ไม่ดี' : '✅ ปลอดภัย'
+                    hypertension: '⚠️ ลดซีอิ๊วขาว/น้ำปลา',
+                    cholesterol: '⚠️ จำกัดไข่แดง (ไม่เกิน 3-4 ฟอง/สัปดาห์)',
+                    gout: '✅ ปลอดภัย'
                 }
             });
         }
 
-        // สร้างเมนูผัก
-        function createVegSoup(veg, ingredients) {
+        // 6. เมนูผักล้วน (มังสวิรัติ - Mild Menu)
+        function createSimpleVegStirFry(veg, analyzed) {
+            const vegName = veg.name;
+            
+            const ingredientsUsed = [
+                `${vegName} - 300 กรัม`
+            ];
+            
+            const seasoningsUsed = [
+                'น้ำมัน - 1 ช้อนโต๊ะ',
+                analyzed.some(a => a.name === 'กระเทียม') ? 'กระเทียม - 3 กลีบ' : 'กระเทียมสำเร็จรูป',
+                'ซีอิ๊วขาว/ซอสเห็ดหอม - 1 ช้อนโต๊ะ'
+            ].filter(Boolean);
+            
             return createMenuCard({
-                name: `แกงจืด${veg.name}ใส่เต้าหู้`,
-                type: 'soup',
+                name: `ผัด${vegName}น้ำมันหอย/เจ`,
                 taste: 'mild',
-                calories: '80-100',
+                calories: '100-150',
                 price: '30-40',
-                time: '15 นาที',
-                ingredients: [`${veg.name} - 200 กรัม`, 'เต้าหู้ - 1 แผ่น'],
-                seasonings: ['น้ำ - 3 ถ้วย', 'ซีอิ๊วขาว - 1 ช้อนโต๊ะ', 'เกลือ - 1/4 ช้อนชา'],
-                steps: ['ต้มน้ำ', 'ใส่เต้าหู้', `ใส่${veg.name}`, 'ปรุงรส'],
+                time: '10 นาที',
+                ingredients: ingredientsUsed,
+                seasonings: seasoningsUsed,
+                steps: [
+                    'เจียวกระเทียมกับน้ำมัน',
+                    `ใส่${vegName} ลงผัดเร็ว ๆ`,
+                    'ปรุงรสด้วยซอส/ซีอิ๊วขาว',
+                    'เติมน้ำเล็กน้อยหากแห้งไป ผัดจนสุก'
+                ],
                 warnings: {
                     diabetes: '✅ ดีมาก',
-                    hypertension: '⚠️ ลดเกลือ',
+                    hypertension: '⚠️ ลดซอสปรุงรส',
                     cholesterol: '✅ ดีมาก',
-                    gout: '✅ ปลอดภัย'
+                    gout: veg.gout ? `❌ ${vegName}มีพิวรีนสูง` : '✅ ปลอดภัย'
                 }
             });
         }
 
-        function createVegStirFry(veg, ingredients) {
-            return createMenuCard({
-                name: `ผัด${veg.name}น้ำมันหอย`,
-                type: 'dry',
-                taste: 'mild',
-                calories: '120-150',
-                price: '35-45',
-                time: '10 นาที',
-                ingredients: [`${veg.name} - 300 กรัม`],
-                seasonings: ['น้ำมัน - 2 ช้อนโต๊ะ', 'กระเทียม - 3 กลีบ', 'น้ำมันหอย - 1 ช้อนโต๊ะ'],
-                steps: ['เจียวกระเทียม', `ใส่${veg.name}`, 'ใส่น้ำมันหอย', 'ผัดให้สุก'],
-                warnings: {
-                    diabetes: '✅ ดี',
-                    hypertension: '⚠️ ลดซอส', 
-                    cholesterol: '✅ ดีมาก',
-                    gout: '✅ ปลอดภัย'
-                }
-            });
-        }
-
-        // สร้างการ์ดเมนู
+        // ฟังก์ชันสร้างการ์ดเมนู (ปรับปรุง: ลบประเภทอาหาร)
         function createMenuCard(data) {
-            const typeText = data.type === 'soup' ? '🍲 อาหารประเภทน้ำ' : '🍳 อาหารประเภทแห้ง';
             const tasteText = data.taste === 'mild' ? '😊 รสอ่อน เหมาะทุกวัย' : '🌶️ รสจัด';
             const tasteClass = data.taste === 'mild' ? 'taste-mild' : 'taste-strong';
-            
+
+            // สร้างรายการคำเตือนสุขภาพจาก Object warnings
+            let warningsHtml = '';
+            const warningLabels = {
+                diabetes: '🩺 โรคเบาหวาน',
+                hypertension: '💓 ความดันโลหิตสูง',
+                cholesterol: '🧈 ไขมันในเลือดสูง',
+                gout: '🦴 โรคเก๊าท์'
+            };
+
+            warningsHtml += '<h4>⚠️ คำแนะนำเฉพาะบุคคล</h4><ul>';
+            for (const key in data.warnings) {
+                if (data.warnings.hasOwnProperty(key)) {
+                    const label = warningLabels[key] || key;
+                    const message = data.warnings[key];
+                    warningsHtml += `<li><strong>${label}:</strong> ${message}</li>`;
+                }
+            }
+            warningsHtml += '</ul>';
+
             return `
-                <div class="menu-card ${data.type}">
-                    <div class="menu-card-header">${typeText}</div>
+                <div class="menu-card">
+                    <div class="menu-card-header">เมนูสำหรับมื้ออาหารของคุณ</div>
                     <div class="menu-card-body">
                         <div class="menu-name">
                             ${data.name}
                             <span class="calories-badge">🔥 ${data.calories} แคลอรี่</span>
                         </div>
-                        <span class="taste-indicator ${tasteClass}">${tasteText}</span>
-                        <div class="price-estimate">💰 ประมาณ ${data.price} บาท</div>
+                        <div class="taste-indicator ${tasteClass}">${tasteText}</div>
+                        <div class="price-estimate">💰 งบประมาณ: ${data.price} บาท/มื้อ (โดยประมาณ)</div>
                         
                         <div class="menu-ingredients">
-                            <h4>📝 วัตถุดิบที่ใช้</h4>
-                            <ul>${data.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+                            <h4>วัตถุดิบที่ใช้ 🥕</h4>
+                            <ul>
+                                ${data.ingredients.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                            <h4>เครื่องปรุงหลัก 🧂</h4>
+                            <ul>
+                                ${data.seasonings.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
                         </div>
-
-                        <div class="menu-ingredients" style="background: linear-gradient(135deg, #FFF0F5, #FFF5F9);">
-                            <h4>🥄 เครื่องปรุง</h4>
-                            <ul>${data.seasonings.map(s => `<li>${s}</li>`).join('')}</ul>
-                        </div>
-
+                        
                         <div class="cooking-method">
-                            <h4>👩‍🍳 วิธีทำ</h4>
-                            <ol>${data.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+                            <h4>ขั้นตอนการทำ (ใช้เวลา ${data.time}) ⏱️</h4>
+                            <ol>
+                                ${data.steps.map(step => `<li>${step}</li>`).join('')}
+                            </ol>
                         </div>
 
                         <div class="menu-warnings">
-                            <h4>⚠️ ข้อควรระวังสำหรับผู้ป่วย</h4>
-                            <ul>
-                                <li><strong>🩺 เบาหวาน:</strong> ${data.warnings.diabetes}</li>
-                                <li><strong>💓 ความดันสูง:</strong> ${data.warnings.hypertension}</li>
-                                <li><strong>🧈 ไขมันสูง:</strong> ${data.warnings.cholesterol}</li>
-                                <li><strong>🦴 เก๊าท์:</strong> ${data.warnings.gout}</li>
-                            </ul>
+                            ${warningsHtml}
                         </div>
 
                         <div class="nutrition-info">
                             <div class="nutrition-item">
-                                <div class="label">⏰ เวลา</div>
-                                <div class="value">${data.time}</div>
+                                <div class="label">โปรตีน</div>
+                                <div class="value">20 g</div>
                             </div>
                             <div class="nutrition-item">
-                                <div class="label">👥 สำหรับ</div>
-                                <div class="value">2-3 คน</div>
+                                <div class="label">ไขมัน</div>
+                                <div class="value">5-10 g</div>
                             </div>
                             <div class="nutrition-item">
-                                <div class="label">🔥 ระดับ</div>
-                                <div class="value">ง่าย</div>
+                                <div class="label">คาร์โบไฮเดรต</div>
+                                <div class="value">5-15 g</div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             `;
         }
-
-        // Enter key support
-        document.addEventListener('DOMContentLoaded', function() {
-            const inputs = document.querySelectorAll('.ingredient-input input');
-            inputs.forEach(input => {
-                input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        generateMenu();
-                    }
-                });
-            });
-        });
     </script>
 </body>
 </html>
